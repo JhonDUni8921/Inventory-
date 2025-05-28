@@ -6,7 +6,7 @@ USE inventario;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------Crear la Tabla usuarios
 
 CREATE TABLE usuarios (
-    CC VARCHAR(20) PRIMARY KEY,
+    CC BIGINT(20) PRIMARY KEY,
     UserDB VARCHAR(50) NOT NULL,
     PassDB VARCHAR(255) NOT NULL,
     RoleDB VARCHAR(20) NOT NULL,
@@ -42,6 +42,7 @@ CREATE TABLE detalles_movimiento (
     id_movimiento INT NOT NULL,
     id_articulo INT NOT NULL,
     cantidad INT NOT NULL,
+    tipo_movimiento VARCHAR(20) NOT NULL,
     FOREIGN KEY (id_movimiento) REFERENCES movimientos(id),
     FOREIGN KEY (id_articulo) REFERENCES productos(id)
 );
