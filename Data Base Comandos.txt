@@ -1,0 +1,102 @@
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Crear la base de Datos
+
+CREATE DATABASE IF NOT EXISTS inventario;
+USE inventario;
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Crear la Tabla usuarios
+
+CREATE TABLE usuarios (
+    CC VARCHAR(20) PRIMARY KEY,
+    UserDB VARCHAR(50) NOT NULL,
+    PassDB VARCHAR(255) NOT NULL,
+    RoleDB VARCHAR(20) NOT NULL,
+    NameDB VARCHAR(100) NOT NULL
+);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Crear la Tabla productos
+
+CREATE TABLE productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    precio DECIMAL(10, 2) NOT NULL,
+    cantidad INT NOT NULL,
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Crear la movimientos
+
+CREATE TABLE movimientos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    usuario VARCHAR(50) NOT NULL,
+    accion VARCHAR(50) NOT NULL
+);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Crear la detalles_movimiento
+
+CREATE TABLE detalles_movimiento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_movimiento INT NOT NULL,
+    id_articulo INT NOT NULL,
+    cantidad INT NOT NULL,
+    FOREIGN KEY (id_movimiento) REFERENCES movimientos(id),
+    FOREIGN KEY (id_articulo) REFERENCES productos(id)
+);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Crear Registros Usuarios (Ayudara a ver como se ve la pagina con mas usuarios)
+
+INSERT INTO usuarios (CC, UserDB, PassDB, RoleDB, NameDB) VALUES
+
+('1011201466', 'Admin_Jhojan', 'Jhojan123', 'Administrador', 'Jhojan'),
+('1011096803', 'Admin_Geidy', 'Geidy123', 'Administrador', 'Geidy'),
+('1032456789', 'Coord_Laura', 'Laura2024', 'Coordinador', 'Laura Gómez'),
+('1043567890', 'Audit_Carlos', 'CarlosAudit', 'Auditor', 'Carlos Mendoza'),
+('1054678901', 'Coord_Andrea', 'AndreaPass', 'Coordinador', 'Andrea Vargas'),
+('1065789012', 'Audit_Miguel', 'MiguelSafe', 'Auditor', 'Miguel Sánchez'),
+('1076890123', 'Coord_Sofia', 'SofiaClave', 'Coordinador', 'Sofía Herrera'),
+('1087901234', 'Audit_Luis', 'Luis4567', 'Auditor', 'Luis Romero'),
+('1098012345', 'Coord_Camila', 'Camila2025', 'Coordinador', 'Camila Torres'),
+('1109123456', 'Audit_Daniel', 'DanielPwd', 'Auditor', 'Daniel Ortega'),
+('1120234567', 'Coord_Valentina', 'ValeCoord', 'Coordinador', 'Valentina López'),
+('1131345678', 'Audit_David', 'DavidAudit', 'Auditor', 'David Ruiz'),
+('1142456789', 'Coord_Natalia', 'NataliaC', 'Coordinador', 'Natalia Ramírez'),
+('1153567890', 'Audit_Esteban', 'EstebanA1', 'Auditor', 'Esteban Morales'),
+('1164678901', 'Coord_Isabella', 'IsaPass', 'Coordinador', 'Isabella León'),
+('1175789012', 'Audit_Tomas', 'Tomas2024', 'Auditor', 'Tomás Castillo'),
+('1186890123', 'Coord_Fernanda', 'FernandaC', 'Coordinador', 'Fernanda Peña'),
+('1197901234', 'Audit_Ricardo', 'RicardoPwd', 'Auditor', 'Ricardo Cárdenas'),
+('1208012345', 'Coord_Gabriela', 'GabyCoord', 'Coordinador', 'Gabriela Díaz'),
+('1219123456', 'Audit_Sebastian', 'SebasAudit', 'Auditor', 'Sebastián Mejía');
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Crear Registros Productos (Ayudara a ver como se ve la pagina con mas productos)
+
+INSERT INTO productos (id, nombre, descripcion, precio, cantidad, fecha_creacion, fecha_actualizacion) VALUES
+
+(201, 'Ryzen 5 5600G', 'Procesador AMD con gráficos integrados', 580000.00, 8, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(202, 'Core i5 12400F', 'Procesador Intel de 6 núcleos sin gráficos integrados', 720000.00, 5, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(203, 'RTX 3060 Ti', 'Tarjeta gráfica Nvidia 8GB GDDR6', 1650000.00, 3, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(204, 'SSD Kingston 480GB', 'Unidad de estado sólido SATA', 140000.00, 12, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(205, 'Fuente EVGA 600W 80+', 'Fuente de poder certificada', 210000.00, 10, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(206, 'Corsair Vengeance 16GB DDR4', 'Memoria RAM 3200MHz', 230000.00, 7, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(207, 'Gabinete Redragon', 'Gabinete gamer con ventiladores RGB', 270000.00, 6, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(208, 'Placa Asus B550M', 'Board micro ATX para Ryzen', 480000.00, 4, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(209, 'Cooler Master Hyper 212', 'Disipador por aire para CPU', 160000.00, 16, '2025-05-25 17:33:35', '2025-05-25 22:32:45'),
+(210, 'SSD M.2 1TB PNY', 'Almacenamiento NVMe Gen3', 280000.00, 5, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(211, 'Teclado Redragon Kumara', 'Teclado mecánico retroiluminado', 150000.00, 10, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(212, 'Mouse Logitech G203', 'Mouse gamer con RGB', 100000.00, 14, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(213, 'Monitor AOC 24"', 'Monitor Full HD 75Hz', 550000.00, 6, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(214, 'Silla Gamer Cougar', 'Silla ergonómica para largas sesiones', 750000.00, 2, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(215, 'Hub USB 3.0', 'Extensor de puertos con alimentación externa', 45000.00, 20, '2025-05-25 17:33:35', '2025-05-25 17:33:35'),
+(216, 'Intel Core i5-12400F', 'Procesador de 6 núcleos eficiente para gamers y creadores', 629000.00, 12, '2025-05-25 12:42:19', '2025-05-25 12:42:19'),
+(217, 'Kingston Fury Beast 16GB DDR4', 'Memoria RAM DDR4 de 3200MHz, ideal para setups gamers', 159000.00, 20, '2025-05-25 12:42:19', '2025-05-25 12:42:19'),
+(218, 'SSD NVMe WD Black 1TB', 'Unidad SSD M.2 de alta velocidad para juegos y cargas pesadas', 369000.00, 15, '2025-05-25 12:42:19', '2025-05-25 12:42:19'),
+(219, 'GeForce RTX 3060 Ti', 'Tarjeta gráfica NVIDIA con excelente rendimiento en juegos', 1599000.00, 5, '2025-05-25 12:42:19', '2025-05-25 12:42:19'),
+(220, 'Corsair RM750x', 'Fuente de poder 750W 80 Plus Gold totalmente modular', 459000.00, 10, '2025-05-25 12:42:19', '2025-05-25 20:01:45');
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Fin
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Fin
+-----------------------------------------------------------------------------------------------------------------------------------------------------------Fin
