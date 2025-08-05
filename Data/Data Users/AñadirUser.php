@@ -1,4 +1,6 @@
 <?php
+include '../DataDB.php';
+
 class Autenticacion {
     public static function validarAdministrador() {
         if (!isset($_COOKIE["NameUserM"]) || !isset($_COOKIE["RoleDB"]) || $_COOKIE["RoleDB"] !== "Administrador") {
@@ -24,7 +26,8 @@ class Usuario {
 }
 
 Autenticacion::validarAdministrador();
-include '../DataDB.php';
+
+$conexion = ConexionBD::getInstancia()->getConexion();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cc = $_POST['CC'];
@@ -66,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a href="../../Usuarios.php"><button class="ButtonNav">USUARIOS</button></a>
                     <?php endif; ?>
 
+                    <a href="../../Equipos.php"><button class="ButtonNav">EQUIPOS</button></a>
                     <a href="../../Inventario.php"><button class="ButtonNav">INVENTARIO</button></a>
-                    <a href="../../Movimientos.php"><button class="ButtonNav">MOVIMIENTOS</button></a>
                 <?php endif; ?>
             </div>
             <div class="DivButtonsNav2">

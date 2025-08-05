@@ -1,4 +1,6 @@
 <?php
+include '../DataDB.php';
+
 class Usuario {
     private $conexion;
 
@@ -17,7 +19,7 @@ class Usuario {
     }
 }
 
-include '../DataDB.php';
+$conexion = ConexionBD::getInstancia()->getConexion();
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
