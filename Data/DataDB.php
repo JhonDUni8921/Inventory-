@@ -1,14 +1,33 @@
 <?php
-$server = "localhost";
-$user = "root";
-$pass = "";
-$db = "Inventario";
+class ConexionBD {
+    private static $instancia = null;
+    private $conexion;
 
-$conexion = new mysqli($server, $user, $pass, $db);
+    private $server = "localhost";
+    private $user = "root";
+    private $pass = "";
+    private $db = "Inventario";
 
-if ($conexion -> connect_errno) {
-    die("Conexión Fallida: " . $conexion -> connect_error);
-} else {
-    echo "";
+    // Constructor privado para evitar nuevas instancias externas
+    private function __construct() {
+        $this->conexion = new mysqli($this->server, $this->user, $this->pass, $this->db);
+
+        if ($this->conexion->connect_error) {
+            die("Conexión fallida: " . $this->conexion->connect_error);
+        }
+    }
+
+    // Método para obtener la instancia única
+    public static function getInstancia() {
+        if (self::$instancia === null) {
+            self::$instancia = new ConexionBD();
+        }
+        return self::$instancia;
+    }
+
+    // Método para obtener el objeto mysqli
+    public function getConexion() {
+        return $this->conexion;
+    }
 }
 ?>

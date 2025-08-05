@@ -47,6 +47,8 @@ if (!isset($_POST["UserName"]) || !isset($_POST["Password"])) {
 $usuario = $_POST["UserName"];
 $contrasena = $_POST["Password"];
 
+$conexion = ConexionBD::getInstancia()->getConexion();
+
 try {
     $auth = new AuthManager($conexion);
     $resultado = $auth->verificarUsuario($usuario, $contrasena);

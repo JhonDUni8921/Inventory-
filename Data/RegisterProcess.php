@@ -17,7 +17,7 @@ class UsuarioManager {
         }
 
         $stmt->bind_param("sssss", $cc, $nombre, $usuario, $contrasena, $rol);
-        
+
         if (!$stmt->execute()) {
             throw new Exception('Error al registrar el usuario: ' . $stmt->error);
         }
@@ -39,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
+
+        $conexion = ConexionBD::getInstancia()->getConexion();
         $usuarioManager = new UsuarioManager($conexion);
         $usuarioManager->registrarUsuario($cc, $userName, $userDB, $password);
         header('Location: ../LoginPage.php');
@@ -47,6 +49,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die($e->getMessage());
     }
 }
-
-$conexion->close();
 ?>
