@@ -1,5 +1,32 @@
 <?php
-include './Data/DataDB.php';
+
+class ConexionBD {
+    private static $instancia = null;
+    private $conexion;
+
+    private $server = "localhost";
+    private $user = "root";
+    private $pass = "";
+    private $db = "Inventario";
+
+    private function __construct() {
+        $this->conexion = new mysqli($this->server, $this->user, $this->pass, $this->db);
+        if ($this->conexion->connect_error) {
+            die("Conexión fallida: " . $this->conexion->connect_error);
+        }
+    }
+
+    public static function getInstancia() {
+        if (self::$instancia === null) {
+            self::$instancia = new ConexionBD();
+        }
+        return self::$instancia;
+    }
+
+    public function getConexion() {
+        return $this->conexion;
+    }
+}
 
 class Autenticacion {
     public static function validarAdministrador() {
@@ -38,6 +65,7 @@ class Movimiento {
     }
 }
 
+$conexion = ConexionBD::getInstancia()->getConexion();
 Autenticacion::validarAdministrador();
 
 if (!isset($_GET['id'])) {
@@ -80,9 +108,8 @@ $detalles = $movimientoObj->obtenerDetalles($id_movimiento);
                     <?php if (isset($_COOKIE["RoleDB"]) && $_COOKIE["RoleDB"] == "Administrador"): ?>
                         <a href="./Usuarios.php"><button class="ButtonNav">USUARIOS</button></a>
                     <?php endif; ?>
-
+                    <a href="./Equipos.php"><button class="ButtonNav">EQUIPOS</button></a>
                     <a href="./Inventario.php"><button class="ButtonNav">INVENTARIO</button></a>
-                    <a href="./Movimientos.php"><button class="ButtonNav">MOVIMIENTOS</button></a>
                 <?php endif; ?>
             </div>
             <div class="DivButtonsNav2">

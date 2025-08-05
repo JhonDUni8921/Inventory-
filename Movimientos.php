@@ -6,6 +6,8 @@ if (!isset($_COOKIE["NameUserM"])) {
     exit();
 }
 
+$conexion = ConexionBD::getInstancia()->getConexion();
+
 class Movimiento {
     private $conexion;
 
@@ -61,6 +63,7 @@ $totalPages = ceil($totalRows / $limit);
 
 $resultados = $movimiento->obtenerMovimientos($search, $limit, $offset);
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -84,9 +87,8 @@ $resultados = $movimiento->obtenerMovimientos($search, $limit, $offset);
                     <?php if (isset($_COOKIE["RoleDB"]) && $_COOKIE["RoleDB"] == "Administrador"): ?>
                         <a href="./Usuarios.php"><button class="ButtonNav">USUARIOS</button></a>
                     <?php endif; ?>
-
+                    <a href="./Equipos.php"><button class="ButtonNav">EQUIPOS</button></a>
                     <a href="./Inventario.php"><button class="ButtonNav">INVENTARIO</button></a>
-                    <a href="./Movimientos.php"><button class="ButtonNav">MOVIMIENTOS</button></a>
                 <?php endif; ?>
             </div>
             <div class="DivButtonsNav2">
@@ -169,7 +171,9 @@ $resultados = $movimiento->obtenerMovimientos($search, $limit, $offset);
           </nav>
         <?php endif; ?>
       </div>
-
+      <?php if (isset($_COOKIE["RoleDB"]) && ($_COOKIE["RoleDB"] == "Administrador" || $_COOKIE["RoleDB"] == "Coordinador")): ?>
+        <a href="./Inventario.php" class="addButton">Volver</a>
+      <?php endif; ?>
     </div>
   </article>
 </section>

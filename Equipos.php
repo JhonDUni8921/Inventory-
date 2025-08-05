@@ -1,14 +1,14 @@
 <?php
 require "./Data/DataDB.php";
 
-class ProductoRepository {
+class EquipoRepository {
     private mysqli $conexion;
 
     public function __construct(mysqli $conexion) {
         $this->conexion = $conexion;
     }
 
-    public function contarProductos(string $search = ''): int {
+    public function contarEquipos(string $search = ''): int {
         $where = '';
         $params = [];
         $types = '';
@@ -16,21 +16,23 @@ class ProductoRepository {
         if ($search !== '') {
             $searchParam = "%$search%";
             if (is_numeric($search)) {
-                $where = " WHERE id = ? OR nombre LIKE ? OR descripcion LIKE ? ";
-                $params = [$search, $searchParam, $searchParam];
-                $types = "sss";
+                $where = " WHERE id = ? OR serial LIKE ? OR placa_proveedor LIKE ? OR asignado_a LIKE ? ";
+                $params = [$search, $searchParam, $searchParam, $searchParam];
+                $types = "ssss";
             } else {
-                $where = " WHERE nombre LIKE ? OR descripcion LIKE ? ";
-                $params = [$searchParam, $searchParam];
-                $types = "ss";
+                $where = " WHERE serial LIKE ? OR placa_proveedor LIKE ? OR asignado_a LIKE ? ";
+                $params = [$searchParam, $searchParam, $searchParam];
+                $types = "sss";
             }
         }
 
-        $sql = "SELECT COUNT(*) as total FROM productos $where";
+        $sql = "SELECT COUNT(*) as total FROM Equipos $where";
         $stmt = $this->conexion->prepare($sql);
+        
         if (!empty($params)) {
             $stmt->bind_param($types, ...$params);
         }
+
         $stmt->execute();
         $result = $stmt->get_result();
         $total = $result->fetch_assoc()['total'] ?? 0;
@@ -39,7 +41,7 @@ class ProductoRepository {
         return (int)$total;
     }
 
-    public function obtenerProductos(string $search = '', int $offset = 0, int $limit = 10): array {
+    public function obtenerEquipos(string $search = '', int $offset = 0, int $limit = 10): array {
         $where = '';
         $params = [];
         $types = '';
@@ -47,47 +49,48 @@ class ProductoRepository {
         if ($search !== '') {
             $searchParam = "%$search%";
             if (is_numeric($search)) {
-                $where = " WHERE id = ? OR nombre LIKE ? OR descripcion LIKE ? ";
-                $params = [$search, $searchParam, $searchParam];
-                $types = "sss";
+                $where = " WHERE id = ? OR serial LIKE ? OR placa_proveedor LIKE ? OR asignado_a LIKE ? ";
+                $params = [$search, $searchParam, $searchParam, $searchParam];
+                $types = "ssss";
             } else {
-                $where = " WHERE nombre LIKE ? OR descripcion LIKE ? ";
-                $params = [$searchParam, $searchParam];
-                $types = "ss";
+                $where = " WHERE serial LIKE ? OR placa_proveedor LIKE ? OR asignado_a LIKE ? ";
+                $params = [$searchParam, $searchParam, $searchParam];
+                $types = "sss";
             }
         }
 
-        $sql = "SELECT id, nombre, descripcion, precio, cantidad FROM productos $where ORDER BY nombre LIMIT ?, ?";
-        $stmt = $this->conexion->prepare($sql);
+        $sql = "SELECT id, serial, placa_proveedor, asignado_a FROM Equipos $where ORDER BY id LIMIT ?, ?";
         $params = array_merge($params, [$offset, $limit]);
         $types .= "ii";
+
+        $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
-        $result = $stmt->get_result();
 
-        $productos = [];
+        $result = $stmt->get_result();
+        $equipos = [];
+
         while ($row = $result->fetch_assoc()) {
-            $productos[] = $row;
+            $equipos[] = $row;
         }
 
         $stmt->close();
-        return $productos;
+        return $equipos;
     }
 }
 
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$search = $_GET['search'] ?? '';
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 $itemsPerPage = 10;
 $offset = ($page - 1) * $itemsPerPage;
 
 $conexion = ConexionBD::getInstancia()->getConexion();
-$repo = new ProductoRepository($conexion);
+$repo = new EquipoRepository($conexion);
 
-$totalItems = $repo->contarProductos($search);
+$totalItems = $repo->contarEquipos($search);
 $totalPages = ceil($totalItems / $itemsPerPage);
-$productos = $repo->obtenerProductos($search, $offset, $itemsPerPage);
+$equipos = $repo->obtenerEquipos($search, $offset, $itemsPerPage);
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -129,55 +132,46 @@ $productos = $repo->obtenerProductos($search, $offset, $itemsPerPage);
 <section>
   <article>
     <div class="DivPrincipal">
-      <h1 class="MainTittle">Inventario MaxiCassa</h1>
+      <h1 class="MainTittle">Equipos de la Empresa</h1>
     </div>
 
     <div class="table-container">
-      <h1 class="ColorTitle">Inventario de Productos</h1>
+      <h1 class="ColorTitle">Listado de Equipos</h1>
 
       <form method="GET" action="" class="search-form">
-        <input type="text" name="search" placeholder="Buscar Producto..." value="<?php echo htmlspecialchars($search); ?>" class="search-input" />
+        <input type="text" name="search" placeholder="Buscar Equipo..." value="<?php echo htmlspecialchars($search); ?>" class="search-input" />
         <button type="submit" class="search-button">Buscar</button>
       </form>
 
-      <?php if (count($productos) > 0): ?>
+      <?php if (count($equipos) > 0): ?>
         <table>
           <thead>
             <tr>
               <th>ID</th>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Cantidad</th>
-              <th>Precio</th>
-              <?php if (isset($_COOKIE["RoleDB"]) && ($_COOKIE["RoleDB"] == "Administrador" || $_COOKIE["RoleDB"] == "Coordinador")): ?>
-                <th>Acciones</th>
-              <?php endif; ?>
+              <th>Serial</th>
+              <th>Placa Proveedor</th>
+              <th>Asignado a</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($productos as $prod): ?>
+            <?php foreach ($equipos as $eq): ?>
               <tr>
-                <td><?php echo htmlspecialchars($prod["id"]); ?></td>
-                <td><?php echo htmlspecialchars($prod["nombre"]); ?></td>
-                <td><?php echo htmlspecialchars($prod["descripcion"]); ?></td>
-                <td><?php echo intval($prod["cantidad"]); ?></td>
-                <td class="price-cell">$ <?php echo number_format($prod["precio"], 0, ',', '.'); ?></td>
-                <?php if (isset($_COOKIE["RoleDB"]) && ($_COOKIE["RoleDB"] == "Administrador" || $_COOKIE["RoleDB"] == "Coordinador")): ?>
-                  <td class="action-buttons">
-                    <a href="./Data/Data_Edicion/EditarProducto.php?id=<?php echo $prod["id"]; ?>" class="editButton" title="Editar">
-                      <img src="./IMG/Editar.png" alt="Editar producto" width="20px" />
+                <td><?php echo $eq["id"]; ?></td>
+                <td><?php echo htmlspecialchars($eq["serial"]); ?></td>
+                <td><?php echo htmlspecialchars($eq["placa_proveedor"]); ?></td>
+                <td><?php echo htmlspecialchars($eq["asignado_a"]); ?></td>
+                <td class="action-buttons">
+                    <a href="./EquiposDetalles.php?id=<?php echo $eq["id"]; ?>" class="editButton" title="Ver Detalles">
+                        <img src="./IMG/Editar.png" alt="Detalles equipo" width="20px" />
                     </a>
-                    <!--<a href="./Data/Data_Edicion/EliminarProducto.php?id=<?php echo $prod["id"]; ?>" class="deleteButton" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este producto?');">
-                      <img src="./IMG/Borrar.png" alt="Eliminar producto" width="20px" />-->
-                    </a>
-                  </td>
-                <?php endif; ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           </tbody>
         </table>
       <?php else: ?>
-        <p>No hay productos que coincidan con la búsqueda.</p>
+        <p>No hay equipos que coincidan con la búsqueda.</p>
       <?php endif; ?>
 
       <div class="PaginationDiv">
@@ -201,13 +195,6 @@ $productos = $repo->obtenerProductos($search, $offset, $itemsPerPage);
           </nav>
         <?php endif; ?>
       </div>
-
-      <?php if (isset($_COOKIE["RoleDB"]) && ($_COOKIE["RoleDB"] == "Administrador" || $_COOKIE["RoleDB"] == "Coordinador")): ?>
-        <a href="./Data/Data_Edicion/AñadirProducto.php" class="addButton">Agregar Producto</a>
-      <?php endif; ?>
-      <?php if (isset($_COOKIE["RoleDB"]) && ($_COOKIE["RoleDB"] == "Administrador" || $_COOKIE["RoleDB"] == "Coordinador")): ?>
-        <a href="./Movimientos.php" class="addButton">Movimientos</a>
-      <?php endif; ?>
     </div>
   </article>
 </section>

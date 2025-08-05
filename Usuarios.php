@@ -79,21 +79,30 @@ class UsuarioModel {
     }
 }
 
+// ✅ Validación de sesión
 if (!isset($_COOKIE["NameUserM"]) || !isset($_COOKIE["RoleDB"]) || $_COOKIE["RoleDB"] != "Administrador") {
     header("Location: ./index.php");
     exit();
 }
 
+// ✅ Obtener conexión usando Singleton
+$conexion = ConexionBD::getInstancia()->getConexion();
+
+// ✅ Parámetros de búsqueda y paginación
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $offset = ($page - 1) * 10;
 
+// ✅ Crear el modelo y procesar datos
 $usuarioModel = new UsuarioModel($conexion, 10);
 $totalItems = $usuarioModel->contarUsuarios($search);
 $totalPaginas = ceil($totalItems / 10);
 $users = $usuarioModel->obtenerUsuarios($search, $offset);
+
+// ✅ Cerrar conexión
 $conexion->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -118,9 +127,8 @@ $conexion->close();
                     <?php if (isset($_COOKIE["RoleDB"]) && $_COOKIE["RoleDB"] == "Administrador"): ?>
                         <a href="./Usuarios.php"><button class="ButtonNav">USUARIOS</button></a>
                     <?php endif; ?>
-
+                    <a href="./Equipos.php"><button class="ButtonNav">EQUIPOS</button></a>
                     <a href="./Inventario.php"><button class="ButtonNav">INVENTARIO</button></a>
-                    <a href="./Movimientos.php"><button class="ButtonNav">MOVIMIENTOS</button></a>
                 <?php endif; ?>
             </div>
             <div class="DivButtonsNav2">
