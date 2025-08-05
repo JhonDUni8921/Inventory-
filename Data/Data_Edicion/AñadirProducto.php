@@ -1,4 +1,7 @@
 <?php
+
+include '../DataDB.php';
+
 if (isset($_COOKIE["RoleDB"]) && ($_COOKIE["RoleDB"] == "Auditor")) {
     header("Location: ../../index.php");
     exit();
@@ -20,7 +23,7 @@ class Producto {
     }
 }
 
-include '../DataDB.php';
+$conexion = ConexionBD::getInstancia()->getConexion();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'];
@@ -59,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a href="../../Usuarios.php"><button class="ButtonNav">USUARIOS</button></a>
                     <?php endif; ?>
 
+                    <a href="../../Equipos.php"><button class="ButtonNav">EQUIPOS</button></a>
                     <a href="../../Inventario.php"><button class="ButtonNav">INVENTARIO</button></a>
-                    <a href="../../Movimientos.php"><button class="ButtonNav">MOVIMIENTOS</button></a>
                 <?php endif; ?>
             </div>
             <div class="DivButtonsNav2">

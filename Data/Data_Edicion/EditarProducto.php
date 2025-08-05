@@ -6,6 +6,8 @@ if (isset($_COOKIE["RoleDB"]) && ($_COOKIE["RoleDB"] == "Auditor")) {
 
 include '../DataDB.php';
 
+$conexion = ConexionBD::getInstancia()->getConexion();
+
 class Producto {
     private $conexion;
 
@@ -116,8 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a href="../../Usuarios.php"><button class="ButtonNav">USUARIOS</button></a>
                     <?php endif; ?>
 
+                    <a href="../../Equipos.php"><button class="ButtonNav">EQUIPOS</button></a>
                     <a href="../../Inventario.php"><button class="ButtonNav">INVENTARIO</button></a>
-                    <a href="../../Movimientos.php"><button class="ButtonNav">MOVIMIENTOS</button></a>
                 <?php endif; ?>
             </div>
             <div class="DivButtonsNav2">
